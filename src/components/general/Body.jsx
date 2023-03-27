@@ -8,7 +8,7 @@ export const Body = (props) => {
     return (
         <main className="bg-gradient-to-r from-rose-200 via-lime-50 to-amber-200 pb-6">
             <StatusActions connected={connected} />
-            {connected ? <TypePlay connected={connected} /> : null}
+            {connected ? <TypePlay connected={connected} bodyStompClient={stompClient} /> : null}
         </main>
     )
 }

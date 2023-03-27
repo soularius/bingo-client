@@ -39,31 +39,31 @@ export const ServerActions = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const stompClientRef = useRef(null);
 
-    const handleConnect = () => {
+    const handleConnect = async () => {
         const socket = new SockJS(import.meta.env.VITE_SOCK_JS_SERVER);
         const stompClient = Stomp.over(socket);
-        stompClient.connect({}, (frame) => {
+        await stompClient.connect({}, (frame) => {
             dispatch({ type: "connected" });
-            onConnectChange(true);
+            onConnectChange(true, stompClientRef);
             console.log("Connected: " + frame);
-            stompClient.subscribe("/topic/greetings", (greeting) => {
+            /* stompClient.subscribe("/topic/greetings", (greeting) => {
                 console.log("[RECEIVE]", greeting.body);
                 self.setState({
                     name: greeting.body
                 });
-            });
+            }); */
         });
         stompClientRef.current = stompClient;
-        props.setStompClient(stompClientRef.current);
+        props.setStompClient(stompClientRef);
     }
 
-    const handleDisconnect = () => {
+    const handleDisconnect = async () => {
         const stompClient = stompClientRef.current;
-        props.setStompClient(stompClientRef.current);
+        props.setStompClient(stompClientRef);
         if (stompClient) {
-            stompClient.disconnect();
+            await stompClient.disconnect();
             dispatch({ type: "disconnected" });
-            onConnectChange(false);
+            onConnectChange(false, stompClientRef);
         }
     }
 

@@ -3,14 +3,18 @@ import React, { useState } from 'react';
 const classConnected = "rounded-full bg-gradient-to-r from-purple-500 to-rose-500 hover:from-purple-600 hover:to-rose-500 py-2 px-3 font-normal font-sans text-white";
 export const TypePlay = (props) => {
 
+    const { bodyStompClient } = props;
     const [typePlay, setTypePlay] = useState('full');
 
     const handleInputChange = (event) => {
         setTypePlay(event.target.value);
     };
 
-    const handleSendTypePlay = () => {
-    }
+    const handleSendTypePlay = async () => {
+        const stompClient = bodyStompClient.current;
+        await stompClient.send("/app/type-play", {}, JSON.stringify({ 'mode': typePlay }));
+    };
+
     return (
         <section id="section-type" className="flex justify-center">
             <div className="bg-white light:bg-slate-900 rounded-lg px-4 py-4 ring-1 ring-slate-900/5 shadow-xl max-w-md mt-5">
