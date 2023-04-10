@@ -35,23 +35,37 @@ const reducer = (state, action) => {
 
 export const ServerActions = (props) => {
 
-    const { onConnectChange } = props;
+    const { onConnectChange, uuid, onServerResponse } = props;
     const [state, dispatch] = useReducer(reducer, initialState);
     const stompClientRef = useRef(null);
 
     const handleConnect = async () => {
         const socket = new SockJS(import.meta.env.VITE_SOCK_JS_SERVER);
         const stompClient = Stomp.over(socket);
-        await stompClient.connect({}, (frame) => {
+        await stompClient.connect({ uuid }, (frame) => {
             dispatch({ type: "connected" });
-            onConnectChange(true, stompClientRef);
+            onConnectChange(true, stompClientRef, null, null, null, null);
             console.log("Connected: " + frame);
-            /* stompClient.subscribe("/topic/greetings", (greeting) => {
-                console.log("[RECEIVE]", greeting.body);
-                self.setState({
-                    name: greeting.body
-                });
-            }); */
+
+            const sessionId = socket._transport.url.split("/")[5];
+
+            console.log("Session ID: " + sessionId); // Muestra el sessionId
+            console.log("Session UUID: " + uuid); // Muestra el sessionId
+
+            stompClient.subscribe(`/topic/user/${uuid}/responses`, async (greeting) => {
+                const messageBody = JSON.parse(greeting.body);
+                console.log('[RECEIVE] :', messageBody);
+                await onServerResponse(messageBody);
+            });
+
+            stompClient.subscribe(`/topic/user/${sessionId}/responses`, async (greeting) => {
+                const messageBody = JSON.parse(greeting.body);
+                console.log('[RECEIVE] :', messageBody);
+                await onServerResponse(messageBody);
+            });
+        }, async (error) => {
+            console.log('[CLIENT] Subscription error:', error);
+            await handleDisconnect();
         });
         stompClientRef.current = stompClient;
         props.setStompClient(stompClientRef);
@@ -62,8 +76,9 @@ export const ServerActions = (props) => {
         props.setStompClient(stompClientRef);
         if (stompClient) {
             await stompClient.disconnect();
+            await onConnectChange(false, stompClientRef, null, false, null, false);
+            await onServerResponse(null);
             dispatch({ type: "disconnected" });
-            onConnectChange(false, stompClientRef);
         }
     }
 

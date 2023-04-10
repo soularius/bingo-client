@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const classConnected = "rounded-full bg-gradient-to-r from-purple-500 to-rose-500 hover:from-purple-600 hover:to-rose-500 py-2 px-3 font-normal font-sans text-white";
+const classSend = "rounded-full bg-gradient-to-r from-purple-500 to-rose-500 hover:from-purple-600 hover:to-rose-500 py-2 px-3 font-normal font-sans text-white";
+const classNotSend = "rounded-full bg-gradient-to-r from-purple-200 to-rose-200 hover:from-purple-300 hover:to-rose-200 py-2 px-3 font-normal font-sans text-white";
 export const TypePlay = (props) => {
 
-    const { bodyStompClient } = props;
+    const {
+        bodyStompClient,
+        serverResponse,
+        onTypePlayChange,
+        typePlayStatus
+    } = props;
+
     const [typePlay, setTypePlay] = useState('full');
+    const [typePlayCall, setTypePlayCall] = useState(false);
 
     const handleInputChange = (event) => {
         setTypePlay(event.target.value);
@@ -13,11 +21,20 @@ export const TypePlay = (props) => {
     const handleSendTypePlay = async () => {
         const stompClient = bodyStompClient.current;
         await stompClient.send("/app/type-play", {}, JSON.stringify({ 'mode': typePlay }));
+        console.log('[CLIENT TYPE PLAY] Sent message:', JSON.stringify({ 'mode': typePlay }));
     };
+
+    useEffect(() => {
+        if (serverResponse && serverResponse.type === 'type') {
+            onTypePlayChange(typePlay, serverResponse.status);
+            setTypePlayCall(true);
+            console.log('[SERVER RESPONSE TYPE PLAY] Receive message:', serverResponse.status);
+        }
+    }, [bodyStompClient, serverResponse]);
 
     return (
         <section id="section-type" className="flex justify-center">
-            <div className="bg-white light:bg-slate-900 rounded-lg px-4 py-4 ring-1 ring-slate-900/5 shadow-xl max-w-md mt-5">
+            <div className="bg-white light:bg-slate-900 rounded-lg px-4 py-4 ring-1 ring-slate-900/5 shadow-xl max-w-md mt-5 w-80">
                 <fieldset className="flex justify-center flex-col">
                     <legend className="mb-3 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-1 fill-rose-500">
@@ -35,6 +52,7 @@ export const TypePlay = (props) => {
                                 name="status"
                                 checked={typePlay === "full"}
                                 onChange={handleInputChange}
+                                disabled={serverResponse && serverResponse.status === 'OK'}
                             />
                             <label htmlFor="full" className="peer-checked/full:text-rose-600 font-sans font-semibold">FULL</label>
                         </div>
@@ -47,13 +65,25 @@ export const TypePlay = (props) => {
                                 name="status"
                                 checked={typePlay === "normal"}
                                 onChange={handleInputChange}
+                                disabled={serverResponse && serverResponse.status === 'OK'}
                             />
                             <label htmlFor="normal" className="peer-checked/normal:text-rose-600 font-sans font-semibold">NORMAL</label>
                         </div>
                     </div>
                     <button
                         onClick={handleSendTypePlay}
-                        className={`mt-4 font-semibold ${classConnected}`}
+                        className={`mt-4 font-semibold 
+                        ${serverResponse &&
+                                serverResponse.status === 'OK' &&
+                                typePlayStatus ?
+                                classNotSend :
+                                classSend}`
+                        }
+                        disabled={
+                            serverResponse &&
+                            serverResponse.status === 'OK' &&
+                            typePlayStatus
+                        }
                     >
                         Enviar
                     </button>

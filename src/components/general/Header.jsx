@@ -5,11 +5,19 @@ import { Pictures } from "./Pictures";
 export const Header = (props) => {
 
     const Logo = Pictures.find((Picture) => Picture.Id === "Logo");
-    const { onConnectChange } = props;
+    const {
+        onConnectChange,
+        uuid,
+        onServerResponse
+    } = props;
     const [stompClient, setStompClient] = useState(null);
 
-    const handleConnectChange = (newConnected, newStompClient) => {
-        onConnectChange(newConnected, newStompClient);
+    const handleConnectChange = (newConnected, newStompClient, typeMode, typeModeStatus) => {
+        onConnectChange(newConnected, newStompClient, typeMode, typeModeStatus);
+    };
+
+    const handleServerResponse = (messageBody) => {
+        onServerResponse(messageBody);
     };
 
     return (
@@ -22,7 +30,12 @@ export const Header = (props) => {
                         </a>
                     </div>
                     <div className="grid gap-1 grid-cols-2">
-                        <ServerActions onConnectChange={handleConnectChange} setStompClient={setStompClient} />
+                        <ServerActions
+                            onConnectChange={handleConnectChange}
+                            setStompClient={setStompClient}
+                            uuid={uuid}
+                            onServerResponse={handleServerResponse}
+                        />
                     </div>
                 </nav>
             </header>
