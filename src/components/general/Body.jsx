@@ -57,6 +57,7 @@ export const Body = (props) => {
                         connected={connected}
                         bodyStompClient={stompClient}
                         uuid={uuid}
+                        serverResponse={serverResponse}
                     />
                     :
                     null}

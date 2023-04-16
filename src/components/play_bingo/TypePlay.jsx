@@ -13,6 +13,7 @@ export const TypePlay = (props) => {
 
     const [typePlay, setTypePlay] = useState('full');
     const [typePlayCall, setTypePlayCall] = useState(false);
+    const [blockTypePlay, setBlockTypePlay] = useState(false);
 
     const handleInputChange = (event) => {
         setTypePlay(event.target.value);
@@ -28,6 +29,7 @@ export const TypePlay = (props) => {
         if (serverResponse && serverResponse.type === 'type') {
             onTypePlayChange(typePlay, serverResponse.status);
             setTypePlayCall(true);
+            setBlockTypePlay(true);
             console.log('[SERVER RESPONSE TYPE PLAY] Receive message:', serverResponse.status);
         }
     }, [bodyStompClient, serverResponse]);
@@ -52,7 +54,7 @@ export const TypePlay = (props) => {
                                 name="status"
                                 checked={typePlay === "full"}
                                 onChange={handleInputChange}
-                                disabled={serverResponse && serverResponse.status === 'OK'}
+                                disabled={blockTypePlay}
                             />
                             <label htmlFor="full" className="peer-checked/full:text-rose-600 font-sans font-semibold">FULL</label>
                         </div>
@@ -65,7 +67,7 @@ export const TypePlay = (props) => {
                                 name="status"
                                 checked={typePlay === "normal"}
                                 onChange={handleInputChange}
-                                disabled={serverResponse && serverResponse.status === 'OK'}
+                                disabled={blockTypePlay ? "disabled" : ""}
                             />
                             <label htmlFor="normal" className="peer-checked/normal:text-rose-600 font-sans font-semibold">NORMAL</label>
                         </div>
@@ -79,11 +81,7 @@ export const TypePlay = (props) => {
                                 classNotSend :
                                 classSend}`
                         }
-                        disabled={
-                            serverResponse &&
-                            serverResponse.status === 'OK' &&
-                            typePlayStatus
-                        }
+                        disabled = {blockTypePlay ? "disabled" : ""}
                     >
                         Enviar
                     </button>

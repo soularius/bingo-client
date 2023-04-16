@@ -14,6 +14,7 @@ export const NamePlay = (props) => {
 
     const [namePlay, setNamePlay] = useState('');
     const [namePlayCall, setNamePlayCall] = useState(false);
+    const [blockNamePlay, setBlockNamePlay] = useState(false);
 
     const handleInputName = (event) => {
         setNamePlay(event.target.value);
@@ -21,14 +22,15 @@ export const NamePlay = (props) => {
 
     const handleSetTypeName = async () => {
         const stompClient = bodyStompClient.current;
-        await stompClient.send("/app/set-name", {}, JSON.stringify({ 'nameClient': namePlay }));
-        console.log('[CLIENT NAME PLAY] Sent message:', JSON.stringify({ 'nameClient': namePlay }));
+        await stompClient.send("/app/set-name", {}, JSON.stringify({ 'playerName': namePlay }));
+        console.log('[CLIENT NAME PLAY] Sent message:', JSON.stringify({ 'playerName': namePlay }));
     };
 
     useEffect(() => {
         if (serverResponse && serverResponse.type === 'name') {
             onNamePlayChange(namePlay, serverResponse.status);
             setNamePlayCall(true);
+            setBlockNamePlay(true);
             console.log('[SERVER RESPONSE NAME PLAY] Receive message:', serverResponse.status);
         }
     }, [bodyStompClient, serverResponse]);
@@ -50,6 +52,7 @@ export const NamePlay = (props) => {
                             className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                             placeholder="Ingresa aquí tu nombre"
                             onChange={handleInputName}
+                            disabled={blockNamePlay ? "disabled" : ""}
                         />
                     </label>
                     <button
@@ -61,12 +64,7 @@ export const NamePlay = (props) => {
                                 classNotSend :
                                 classSend}`
                         }
-                        disabled={
-                            ((serverResponse &&
-                                serverResponse.status === 'OK' &&
-                                namePlayStatus) ||
-                                namePlay === "") ? "disabled" : ""
-                        }
+                        disabled={blockNamePlay ? "disabled" : ""}
                     >
                         Enviar
                     </button>
