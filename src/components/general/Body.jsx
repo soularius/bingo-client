@@ -14,8 +14,11 @@ export const Body = (props) => {
         typePlayStatus,
         onNamePlayChange,
         namePlay,
-        namePlayStatus
+        namePlayStatus,
+        onPrePlayInit
     } = props;
+
+    const [initPlay, setInitPlay] = useState(false);
 
     const handleTypePlay = (typeMode, typeModeStatus) => {
         onTypePlayChange(typeMode, typeModeStatus);
@@ -25,43 +28,57 @@ export const Body = (props) => {
         onNamePlayChange(namePlay, namePlayStatus);
     };
 
+    const handleServerInitPrePlay = (tablePlayer, modePlayer) => {
+        onPrePlayInit(tablePlayer, modePlayer);
+    }
+
+    const handleInitPlay = (init) => {
+        setInitPlay(init);
+    }
+
     return (
         <main className="bg-gradient-to-r from-rose-200 via-lime-50 to-amber-200 pb-6">
             <StatusActions connected={connected} />
-            <div className="grid grid-cols-2 gap-2">
-                {connected ?
-                    <TypePlay
-                        connected={connected}
-                        bodyStompClient={stompClient}
-                        uuid={uuid}
-                        serverResponse={serverResponse}
-                        onTypePlayChange={handleTypePlay}
-                        typePlayStatus={typePlayStatus}
-                    />
-                    :
-                    null
-                }
-                {connected && typePlayStatus ?
-                    <NamePlay
-                        connected={connected}
-                        bodyStompClient={stompClient}
-                        uuid={uuid}
-                        serverResponse={serverResponse}
-                        onNamePlayChange={handleNamePlay}
-                        namePlayStatus={namePlayStatus}
-                    />
-                    :
-                    null}
-                {connected && typePlayStatus && namePlayStatus ?
-                    <WaitPlay
-                        connected={connected}
-                        bodyStompClient={stompClient}
-                        uuid={uuid}
-                        serverResponse={serverResponse}
-                    />
-                    :
-                    null}
-            </div>
+            {!initPlay ?
+                <div id="pre-init" className="grid grid-cols-2 gap-2">
+                    {connected ?
+                        <TypePlay
+                            connected={connected}
+                            bodyStompClient={stompClient}
+                            uuid={uuid}
+                            serverResponse={serverResponse}
+                            onTypePlayChange={handleTypePlay}
+                            typePlayStatus={typePlayStatus}
+                        />
+                        :
+                        null
+                    }
+                    {connected && typePlayStatus ?
+                        <NamePlay
+                            connected={connected}
+                            bodyStompClient={stompClient}
+                            uuid={uuid}
+                            serverResponse={serverResponse}
+                            onNamePlayChange={handleNamePlay}
+                            namePlayStatus={namePlayStatus}
+                        />
+                        :
+                        null}
+                    {connected && typePlayStatus && namePlayStatus ?
+                        <WaitPlay
+                            connected={connected}
+                            bodyStompClient={stompClient}
+                            uuid={uuid}
+                            serverResponse={serverResponse}
+                            onPrePlayInit={handleServerInitPrePlay}
+                            onInitPlay={handleInitPlay}
+                        />
+                        :
+                        null}
+                </div>
+                :
+                <div>Start Play</div>
+            }
         </main>
     )
 }

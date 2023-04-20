@@ -6,24 +6,52 @@ export const WaitPlay = (props) => {
 
     const {
         serverResponse,
-        bodyStompClient
+        bodyStompClient,
+        onPrePlayInit,
+        onInitPlay
     } = props;
 
 
     const [displayText, setDisplayText] = useState("Esperando Otros Jugadores");
     const [counter, setCounter] = useState(null);
+    const [valSleep, setValSleep] = useState(15);
+    const [messageSent, setMessageSent] = useState(false);
+
+    const handleServerInitPrePlay = (tablePlayer, modePlayer) => {
+        onPrePlayInit(tablePlayer, modePlayer);
+    }
+
+    const handleInitPlay = (init) => {
+        onInitPlay(init);
+    }
+
+
+    const handleSendTypePlay = async () => {
+        if (!messageSent) {
+            const stompClient = bodyStompClient.current;
+            await stompClient.send("/app/pre-play", {}, JSON.stringify({ 'status': 'ready' }));
+            console.log('[CLIENT PRE PLAY] Sent message:', JSON.stringify({ 'status': 'ready' }));
+            setMessageSent(true);
+        }
+    };
 
     useEffect(() => {
         if (serverResponse && serverResponse.type === 'pre_play') {
             console.log('[SERVER RESPONSE PRE PLAY] Receive message:', serverResponse.status);
             setDisplayText("Preparando juego");
-            setCounter(10);
+            setCounter(valSleep);
+        }
+        if (serverResponse && serverResponse.type === 'wait_init') {
+            console.log('[SERVER RESPONSE WAIT PLAY] Receive message:', serverResponse.status);
+            setDisplayText("Iniciando juego");
+            handleServerInitPrePlay(JSON.parse(serverResponse.message), serverResponse.other)
         }
     }, [bodyStompClient, serverResponse]);
 
     useEffect(() => {
         if (counter === null) return;
 
+        if (counter === valSleep) handleSendTypePlay();
         if (counter > 0) {
             const timer = setTimeout(() => {
                 setCounter(counter - 1);
@@ -32,6 +60,7 @@ export const WaitPlay = (props) => {
         } else {
             setCounter(null);
             // Aquí puedes agregar lógica adicional cuando el contador llegue a 0
+            handleInitPlay(true);
         }
     }, [counter]);
 
