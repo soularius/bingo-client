@@ -15,7 +15,7 @@ export const StartPlay = (props) => {
         startPlayer
     } = props;
 
-    const [firstRow, setFirstRow] = useState(['B', 'I', 'N', 'G', 'O']);
+    const firstRow = ['B', 'I', 'N', 'G', 'O'];
 
     const handleServerRefreshTable = (tablePlayer) => {
         onServerRefreshTable(tablePlayer);
