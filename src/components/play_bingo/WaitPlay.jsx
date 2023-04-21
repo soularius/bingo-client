@@ -14,7 +14,7 @@ export const WaitPlay = (props) => {
 
     const [displayText, setDisplayText] = useState("Esperando Otros Jugadores");
     const [counter, setCounter] = useState(null);
-    const [valSleep, setValSleep] = useState(15);
+    const [valSleep, setValSleep] = useState(3);
     const [messageSent, setMessageSent] = useState(false);
 
     const handleServerInitPrePlay = (tablePlayer, modePlayer) => {
@@ -24,7 +24,6 @@ export const WaitPlay = (props) => {
     const handleInitPlay = (init) => {
         onInitPlay(init);
     }
-
 
     const handleSendTypePlay = async () => {
         if (!messageSent) {

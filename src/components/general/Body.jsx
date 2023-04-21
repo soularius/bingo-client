@@ -3,6 +3,8 @@ import { StatusActions } from "../connect_server/StatusActions";
 import { TypePlay } from "../play_bingo/TypePlay";
 import { NamePlay } from "../play_bingo/NamePlay";
 import { WaitPlay } from "../play_bingo/WaitPlay";
+import { StartPlay } from "../play_bingo/StartPlay";
+import { ModePlay } from "../play_bingo/ModePlay";
 
 export const Body = (props) => {
     const {
@@ -13,12 +15,16 @@ export const Body = (props) => {
         onTypePlayChange,
         typePlayStatus,
         onNamePlayChange,
-        namePlay,
         namePlayStatus,
-        onPrePlayInit
+        onPrePlayInit,
+        tablePlayer,
+        modePlayer,
+        onServerRefreshTable,
+        onStartPlayer,
+        startPlayer,
+        onInitPlay,
+        initPlay
     } = props;
-
-    const [initPlay, setInitPlay] = useState(false);
 
     const handleTypePlay = (typeMode, typeModeStatus) => {
         onTypePlayChange(typeMode, typeModeStatus);
@@ -32,8 +38,16 @@ export const Body = (props) => {
         onPrePlayInit(tablePlayer, modePlayer);
     }
 
+    const handleServerRefreshTable = (tablePlayer) => {
+        onServerRefreshTable(tablePlayer);
+    }
+
     const handleInitPlay = (init) => {
-        setInitPlay(init);
+        onInitPlay(init);
+    }
+
+    const handleStartPlayer = (start) => {
+        onStartPlayer(start);
     }
 
     return (
@@ -77,7 +91,22 @@ export const Body = (props) => {
                         null}
                 </div>
                 :
-                <div>Start Play</div>
+                <div id="init-play" className="grid grid-cols-1 gap-2">
+                    <ModePlay
+                        modePlayer={modePlayer}
+                    />
+                    <StartPlay
+                        connected={connected}
+                        bodyStompClient={stompClient}
+                        uuid={uuid}
+                        serverResponse={serverResponse}
+                        tablePlayer={tablePlayer}
+                        modePlayer={modePlayer}
+                        onServerRefreshTable={handleServerRefreshTable}
+                        onStartPlayer={handleStartPlayer}
+                        startPlayer={startPlayer}
+                    />
+                </div>
             }
         </main>
     )

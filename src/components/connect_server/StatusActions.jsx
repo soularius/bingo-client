@@ -17,7 +17,6 @@ export const StatusActions = (props) => {
                         Estado de la conexión
                     </p>
                     <span
-                        href="#"
                         className={`first-line:flex-none rounded-full py-1 px-3.5 text-sm font-semibold text-white shadow-sm 
                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                         focus-visible:outline-gray-900 ${connected ?

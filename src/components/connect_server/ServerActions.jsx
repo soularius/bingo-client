@@ -39,12 +39,28 @@ export const ServerActions = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const stompClientRef = useRef(null);
 
+    const reInitSystem = async (connected) => {
+        await onConnectChange({
+            newConnected: connected,
+            newStompClient: stompClientRef,
+            typeMode: null,
+            typeModeStatus: null,
+            newNamePlay: null,
+            newNamePlayStatus: null,
+            newTablePlayer: null,
+            newModePlayer: null,
+            newStartPlayer: false,
+            newInitPlay: false
+        });
+    };
+
     const handleConnect = async () => {
         const socket = new SockJS(import.meta.env.VITE_SOCK_JS_SERVER);
         const stompClient = Stomp.over(socket);
-        await stompClient.connect({ uuid }, (frame) => {
+        await stompClient.connect({ uuid }, async (frame) => {
             dispatch({ type: "connected" });
-            onConnectChange(true, stompClientRef, null, null, null, null);
+            await reInitSystem(true);
+
             console.log("Connected: " + frame);
 
             const sessionId = socket._transport.url.split("/")[5];
@@ -76,7 +92,7 @@ export const ServerActions = (props) => {
         props.setStompClient(stompClientRef);
         if (stompClient) {
             await stompClient.disconnect();
-            await onConnectChange(false, stompClientRef, null, false, null, false);
+            await reInitSystem(false);
             await onServerResponse(null);
             dispatch({ type: "disconnected" });
         }

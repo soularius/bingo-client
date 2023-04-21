@@ -12,8 +12,30 @@ export const Header = (props) => {
     } = props;
     const [stompClient, setStompClient] = useState(null);
 
-    const handleConnectChange = (newConnected, newStompClient, typeMode, typeModeStatus) => {
-        onConnectChange(newConnected, newStompClient, typeMode, typeModeStatus);
+    const handleConnectChange = ({
+        newConnected,
+        newStompClient,
+        typeMode,
+        typeModeStatus,
+        newNamePlay,
+        newNamePlayStatus,
+        newTablePlayer,
+        newModePlayer,
+        newStartPlayer,
+        newInitPlay
+    }) => {
+        onConnectChange({
+            newConnected: newConnected,
+            newStompClient: newStompClient,
+            typeMode: typeMode,
+            typeModeStatus: typeModeStatus,
+            newNamePlay: newNamePlay,
+            newNamePlayStatus: newNamePlayStatus,
+            newTablePlayer: newTablePlayer,
+            newModePlayer: newModePlayer,
+            newStartPlayer: newStartPlayer,
+            newInitPlay: newInitPlay
+        });
     };
 
     const handleServerResponse = (messageBody) => {

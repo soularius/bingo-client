@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Header } from './components/general/header';
 import { Body } from './components/general/Body';
 import { v4 as uuidv4 } from 'uuid';
+import { AceptTable } from "./components/modals/AceptTable";
 
 export const BingoApp = () => {
 
@@ -10,26 +11,36 @@ export const BingoApp = () => {
     const [stompClient, setStompClient] = useState(null);
     const [serverResponse, setServerResponse] = useState(null);
     const [typePlay, setTypePlay] = useState(null);
-    const [typePlayStatus, setTypePlayStatus] = useState(null);
+    const [typePlayStatus, setTypePlayStatus] = useState(false);
     const [namePlay, setNamePlay] = useState(null);
-    const [namePlayStatus, setNamePlayStatus] = useState(null);
-    const [tablePlayer, setTablePlayer] = useState(null);
+    const [namePlayStatus, setNamePlayStatus] = useState(false);
+    const [tablePlayer, setTablePlayer] = useState([]);
     const [modePlayer, setModePlayer] = useState(null);
+    const [startPlayer, setStartPlayer] = useState(false);
+    const [initPlay, setInitPlay] = useState(false);
 
-    const handleConnectChange = (
+    const handleConnectChange = ({
         newConnected,
         newStompClient,
         typeMode,
         typeModeStatus,
-        namePlay,
-        namePlayStatus
-    ) => {
+        newNamePlay,
+        newNamePlayStatus,
+        newTablePlayer,
+        newModePlayer,
+        newStartPlayer,
+        newInitPlay
+    }) => {
         setConnected(newConnected);
         setStompClient(newStompClient);
         setTypePlay(typeMode);
         setTypePlayStatus(typeModeStatus);
-        setNamePlay(namePlay);
-        setNamePlayStatus(namePlayStatus);
+        setNamePlay(newNamePlay);
+        setNamePlayStatus(newNamePlayStatus);
+        setTablePlayer(newTablePlayer);
+        setModePlayer(newModePlayer);
+        setStartPlayer(newStartPlayer);
+        setInitPlay(newInitPlay);
     };
 
     const handleTypePlayChange = (typeMode, typeModeStatus) => {
@@ -49,6 +60,18 @@ export const BingoApp = () => {
     const handleServerInitPrePlay = (tablePlayer, modePlayer) => {
         setTablePlayer(tablePlayer);
         setModePlayer(modePlayer);
+    }
+
+    const handleServerRefreshTable = (tablePlayer) => {
+        setTablePlayer(tablePlayer);
+    }
+
+    const handleStartPlayer = (start) => {
+        setStartPlayer(start);
+    }
+
+    const handleInitPlay = (initPlay) => {
+        setInitPlay(initPlay);
     }
 
     const [uuid] = useState(() => uuidv4());
@@ -73,6 +96,13 @@ export const BingoApp = () => {
                 namePlay={namePlay}
                 namePlayStatus={namePlayStatus}
                 onPrePlayInit={handleServerInitPrePlay}
+                tablePlayer={tablePlayer}
+                modePlayer={modePlayer}
+                onServerRefreshTable={handleServerRefreshTable}
+                onStartPlayer={handleStartPlayer}
+                startPlayer={startPlayer}
+                onInitPlay={handleInitPlay}
+                initPlay={initPlay}
             />
         </>
     )
