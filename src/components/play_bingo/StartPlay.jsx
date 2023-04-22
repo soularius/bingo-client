@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AceptTable } from "../modals/AceptTable";
+import { AcceptTable } from "../modals/AcceptTable";
 
 const classSend = "rounded-full bg-gradient-to-r from-purple-500 to-rose-500 hover:from-purple-600 hover:to-rose-500 py-2 px-3 font-normal font-sans text-white";
 const classNotSend = "rounded-full bg-gradient-to-r from-purple-200 to-rose-200 hover:from-purple-300 hover:to-rose-200 py-2 px-3 font-normal font-sans text-white";
@@ -31,7 +31,7 @@ export const StartPlay = (props) => {
     return (
         <section id="section-play" className="flex justify-center items-center flex-col py-2 px-2">
             {!startPlayer ?
-                <AceptTable
+                <AcceptTable
                     bodyStompClient={bodyStompClient}
                     serverResponse={serverResponse}
                     onServerRefreshTable={handleServerRefreshTable}
@@ -58,7 +58,7 @@ export const StartPlay = (props) => {
                             <tr key={rowIndex}>
                                 {row.map((number, columnIndex) => (
                                     <td key={columnIndex} className="w-12 h-12 border border-gray-300 p-2 text-center text-white">
-                                        {number}
+                                        {number == 0 ? <span aria-hidden="true" className="text-2xl">&#x1F47E;</span> : number}
                                     </td>
                                 ))}
                             </tr>

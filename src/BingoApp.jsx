@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Header } from './components/general/header';
 import { Body } from './components/general/Body';
 import { v4 as uuidv4 } from 'uuid';
-import { AceptTable } from "./components/modals/AceptTable";
 
 export const BingoApp = () => {
 
