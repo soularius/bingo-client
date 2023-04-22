@@ -21,15 +21,24 @@ export const StartPlayLoad = (props) => {
 
     useEffect(() => {
         if (serverResponse && serverResponse.type === 'play_go') {
-            onWaitPlayer(false, true);
             console.log('[SERVER RESPONSE TYPE PLAY] Receive message:', serverResponse.status);
+            setCounter(valSleep);
         }
     }, [bodyStompClient, serverResponse]);
+
+
+    const handleSetFirstNumber = async () => {
+        const stompClient = bodyStompClient.current;
+        await stompClient.send("/app/get-number", {}, JSON.stringify({ 'letter': '', 'number': 0, 'validate': false }));
+        console.log('[CLIENT INIT TABLE PLAY] Sent message:', JSON.stringify({ 'accept': true }));
+    };
 
     useEffect(() => {
         if (counter === null) return;
 
-        if (counter === valSleep) setDisplayText("Let`s Go");
+        if (counter === valSleep) {
+            setDisplayText("Let`s Go");
+        }
         if (counter > 0) {
             const timer = setTimeout(() => {
                 setCounter(counter - 1);
@@ -37,7 +46,8 @@ export const StartPlayLoad = (props) => {
             return () => clearTimeout(timer);
         } else {
             setCounter(null);
-            // Aquí puedes agregar lógica adicional cuando el contador llegue a 0
+            onWaitPlayer(false, true);
+            handleSetFirstNumber();
         }
     }, [counter]);
 
@@ -69,9 +79,9 @@ export const StartPlayLoad = (props) => {
                         >
                             <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                            <div className="mb-3 flex items-center justify-center">
+                                    <div className="sm:flex sm:items-start w-full">
+                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                            <div className="flex items-center justify-start w-full">
                                                 <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                                                     <BellIcon className="h-6 w-6 text-rose-700" aria-hidden="true" />
                                                 </div>
