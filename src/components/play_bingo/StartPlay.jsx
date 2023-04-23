@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AcceptTable } from "../modals/AcceptTable";
 import { ProcessNumber } from "../logic/ProcessNumber";
+import { GamePlayer } from "../modals/GamePlayer";
 
 const classSend = "rounded-full bg-gradient-to-r from-purple-500 to-rose-500 hover:from-purple-600 hover:to-rose-500 py-2 px-3 font-normal font-sans text-white";
 const classNotSend = "rounded-full bg-gradient-to-r from-purple-200 to-rose-200 hover:from-purple-300 hover:to-rose-200 py-2 px-3 font-normal font-sans text-white";
@@ -18,6 +19,8 @@ export const StartPlay = (props) => {
 
     const firstRow = ['B', 'I', 'N', 'G', 'O'];
     const [copyTablePlayer, setCopyTablePlayer] = useState(null);
+    const [playerGame, setPlayerGame] = useState("");
+    const [gameOver, setGameOver] = useState(false);
 
     const handleServerRefreshTable = (tablePlayer) => {
         onServerRefreshTable(tablePlayer);
@@ -46,14 +49,25 @@ export const StartPlay = (props) => {
                     onStartPlayer={handleStartPlayer}
                 />
                 :
-                <ProcessNumber
-                    bodyStompClient={bodyStompClient}
-                    serverResponse={serverResponse}
-                    onServerRefreshTableNumberSelect={handleServerRefreshTableNumberSelect}
-                    copyTablePlayer={copyTablePlayer}
-                    firstRow={firstRow}
-                    tablePlayer={tablePlayer}
-                />
+                <>
+                    {gameOver ?
+                        < GamePlayer
+                            playerGame={playerGame}
+                        />
+                        :
+                        null
+                    }
+                    < ProcessNumber
+                        bodyStompClient={bodyStompClient}
+                        serverResponse={serverResponse}
+                        onServerRefreshTableNumberSelect={handleServerRefreshTableNumberSelect}
+                        copyTablePlayer={copyTablePlayer}
+                        firstRow={firstRow}
+                        tablePlayer={tablePlayer}
+                        onPlayerGame={setPlayerGame}
+                        onGameOver={setGameOver}
+                    />
+                </>
             }
             <div className={`rounded-lg px-4 py-4 ring-1 ring-slate-900/5 shadow-xl max-w-md mt-5 w-80 bg-gradient-to-r
                             from-purple-500 from-20% via-cyan-500 via-30% to-emerald-500 to-90%`}>

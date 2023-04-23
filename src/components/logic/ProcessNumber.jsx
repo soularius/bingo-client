@@ -16,7 +16,9 @@ export const ProcessNumber = (props) => {
         onServerRefreshTableNumberSelect,
         copyTablePlayer,
         firstRow,
-        tablePlayer
+        onGameOver,
+        onPlayerGame
+
     } = props;
 
     const [letterPlayer, setLetterPlayer] = useState(null);
@@ -56,6 +58,10 @@ export const ProcessNumber = (props) => {
             const stompClient = bodyStompClient.current;
             await stompClient.send("/app/get-number", {}, JSON.stringify({ 'letter': letterPlayer, 'number': numberPlayer, 'validate': foundValue }));
             console.log('[CLIENT SEND TABLE PLAY] Sent message:', JSON.stringify({ 'letter': letterPlayer, 'number': numberPlayer, 'validate': foundValue }));
+        } else {
+            console.log("[CLIENT] User Winner");
+            onPlayerGame(serverResponse.other);
+            onGameOver(true);
         }
     };
 
