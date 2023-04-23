@@ -58,6 +58,8 @@ export const ProcessNumber = (props) => {
             const stompClient = bodyStompClient.current;
             await stompClient.send("/app/get-number", {}, JSON.stringify({ 'letter': letterPlayer, 'number': numberPlayer, 'validate': foundValue }));
             console.log('[CLIENT SEND TABLE PLAY] Sent message:', JSON.stringify({ 'letter': letterPlayer, 'number': numberPlayer, 'validate': foundValue }));
+            setLetterPlayer(null);
+            setNumberPlayer(null);
         } else {
             console.log("[CLIENT] User Winner");
             onPlayerGame(serverResponse.other);
